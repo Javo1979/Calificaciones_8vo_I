@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libreta de Calificaciones - PCEI Tungurahua</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+            margin: 5px 0;
+        }
+
+        .selection-area {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+        }
+
+        .selection-area h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        select {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        select:hover {
+            border-color: #764ba2;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        select:focus {
+            border-color: #764ba2;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .report-card {
+            padding: 40px;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .student-info {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .student-info i {
+            font-size: 40px;
+        }
+
+        .student-info h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 18px;
+            font-size: 15px;
+        }
+
+        .subject-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .subject-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .grade {
+            font-weight: bold;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .motivational {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .average-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .average-section h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .average-value {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .pdf-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .pdf-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            table {
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-graduation-cap" style="font-size: 50px; margin-bottom: 15px;"></i>
+            <h1>UNIDAD EDUCATIVA PCEI "TUNGURAHUA"</h1>
+            <p>MODALIDAD EXTRAORDINARIA INTENSIVA - PERIODO LECTIVO 2024-2025</p>
+            <p><i class="fas fa-map-marker-alt"></i> Distrito: Ambato 18D02</p>
+            <p><i class="fas fa-user"></i> Docente: Msc. Javier Núñez</p>
+        </div>
+
+        <div class="selection-area" id="selectionArea">
+            <h2><i class="fas fa-user-graduate"></i> Selecciona tu nombre</h2>
+            <select id="studentSelect" onchange="showReport()">
+                <option value="">-- Selecciona un estudiante --</option>
+            </select>
+        </div>
+
+        <div class="report-card" id="reportCard">
+            <div class="student-info">
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <h3 id="studentName"></h3>
+                    <p>Libreta de Calificaciones</p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-book"></i> Asignatura</th>
+                        <th><i class="fas fa-star"></i> Promedio</th>
+                        <th><i class="fas fa-comment"></i> Observación</th>
+                    </tr>
+                </thead>
+                <tbody id="gradesTable">
+                </tbody>
+            </table>
+
+            <div class="average-section">
+                <h3><i class="fas fa-chart-line"></i> Promedio General</h3>
+                <div class="average-value" id="averageValue">0.00</div>
+                <p id="generalMessage"></p>
+            </div>
+
+            <button class="pdf-button" id="pdfButton" onclick="exportToPDF()">
+                <i class="fas fa-file-pdf"></i> Exportar como PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        const studentsData = {
+            "BOMBOZA NUÑEZ ALAN DAVID": {
+                "Educación Artística": 7.26,
+                "Estudios Sociales": 7.26
+            },
+            "CHISAG POAQUIZA BRYAN NEICER": {
+                "Matemática": 8.30,
+                "Lengua y Literatura": 8.80,
+                "Educación Artística": 7.26,
+                "Educación Física": 7.30,
+                "Inglés": 7.21,
+                "Ciencias Naturales": 8.80,
+                "Estudios Sociales": 8.06,
+                "Cívica": 9.00
+            },
+            "CHUCUYAN ANGAMARCA CARLOS VINICIO": {
+                "Matemática": 8.93,
+                "Lengua y Literatura": 9.46,
+                "Educación Artística": 8.86,
+                "Educación Física": 9.33,
+                "Inglés": 8.91,
+                "Ciencias Naturales": 9.20,
+                "Cívica": 9.53
+            },
+            "CURAY FREIRE MARTHA SUSANA": {
+                "Matemática": 7.00,
+                "Lengua y Literatura": 9.00,
+                "Educación Artística": 7.00,
+                "Educación Física": 7.36,
+                "Inglés": 7.48,
+                "Ciencias Naturales": 9.00,
+                "Estudios Sociales": 7.00,
+                "Cívica": 7.00
+            },
+            "GALARZA CAIZA EDGAR PATRICIO": {
+                "Educación Artística": 7.00,
+                "Estudios Sociales": 7.00
+            },
+            "GARCES POAQUIZA AMELIA MICHELLE": {
+                "Matemática": 8.60,
+                "Lengua y Literatura": 8.66,
+                "Educación Artística": 8.09,
+                "Educación Física": 9.73,
+                "Inglés": 8.64,
+                "Ciencias Naturales": 9.13,
+                "Estudios Sociales": 7.24,
+                "Cívica": 8.93
+            },
+            "GIRALDO MONTENEGRO DIGNA MARIBEL": {
+                "Matemática": 9.20,
+                "Lengua y Literatura": 9.20,
+                "Educación Artística": 8.93,
+                "Educación Física": 9.33,
+                "Inglés": 8.28,
+                "Ciencias Naturales": 9.73,
+                "Estudios Sociales": 9.31,
+                "Cívica": 9.33
+            },
+            "GIRALDO MONTENEGRO GLENDA KATHERINE": {
+                "Matemática": 8.60,
+                "Lengua y Literatura": 9.33,
+                "Educación Artística": 9.20,
+                "Educación Física": 10.00,
+                "Inglés": 8.46,
+                "Ciencias Naturales": 10.00,
+                "Estudios Sociales": 9.40,
+                "Cívica": 9.46
+            },
+            "GUATATUCA PEREZ JHOLAO WALTER": {
+                "Ciencias Naturales": 8.33
+            },
+            "ILLANES ARIUCURI JIMMY ROLANDO": {
+                "Matemática": 7.86,
+                "Lengua y Literatura": 7.13,
+                "Educación Física": 7.00,
+                "Inglés": 8.28,
+                "Ciencias Naturales": 8.46,
+                "Estudios Sociales": 6.60,
+                "Cívica": 7.53
+            },
+            "MANOBANDA TELENCHANA LOURDES MARIA": {
+                "Matemática": 8.13,
+                "Lengua y Literatura": 9.26,
+                "Educación Artística": 7.41,
+                "Educación Física": 9.00,
+                "Inglés": 8.53,
+                "Ciencias Naturales": 8.20,
+                "Estudios Sociales": 8.33,
+                "Cívica": 9.40
+            },
+            "MINTA ANDRANGO GLADYS GABRIELA": {
+                "Matemática": 8.65,
+                "Lengua y Literatura": 9.80,
+                "Educación Artística": 9.44,
+                "Educación Física": 8.22,
+                "Inglés": 9.27,
+                "Ciencias Naturales": 9.13,
+                "Estudios Sociales": 9.21,
+                "Cívica": 9.80
+            },
+            "RUIZ PEÑALOZA ROSENDO DANILO": {
+                "Matemática": 8.60,
+                "Lengua y Literatura": 9.46,
+                "Educación Artística": 9.53,
+                "Educación Física": 8.73,
+                "Inglés": 9.71,
+                "Ciencias Naturales": 9.13,
+                "Estudios Sociales": 7.76,
+                "Cívica": 9.73
+            },
+            "TIBAN TIPAN EDISSON FERNANDO": {
+                "Matemática": 8.03,
+                "Lengua y Literatura": 9.53,
+                "Educación Artística": 9.19,
+                "Educación Física": 8.00,
+                "Inglés": 8.33,
+                "Ciencias Naturales": 9.53,
+                "Estudios Sociales": 9.48,
+                "Cívica": 9.53
+            }
+        };
+
+        const subjectIcons = {
+            "Matemática": { icon: "fa-calculator", color: "#26A69A" },
+            "Lengua y Literatura": { icon: "fa-pen-fancy", color: "#EC407A" },
+            "Educación Artística": { icon: "fa-palette", color: "#FF6B6B" },
+            "Educación Física": { icon: "fa-running", color: "#FFA726" },
+            "Inglés": { icon: "fa-language", color: "#AB47BC" },
+            "Ciencias Naturales": { icon: "fa-flask", color: "#4CAF50" },
+            "Estudios Sociales": { icon: "fa-globe", color: "#42A5F5" },
+            "Cívica": { icon: "fa-balance-scale", color: "#9C27B0" }
+        };
+
+        // Populate student dropdown
+        const select = document.getElementById('studentSelect');
+        Object.keys(studentsData).forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+        });
+
+        function showReport() {
+            const studentName = document.getElementById('studentSelect').value;
+            if (!studentName) {
+                document.getElementById('reportCard').style.display = 'none';
+                return;
+            }
+
+            const grades = studentsData[studentName];
+            document.getElementById('studentName').textContent = studentName;
+            
+            const tbody = document.getElementById('gradesTable');
+            tbody.innerHTML = '';
+            
+            let total = 0;
+            let count = 0;
+
+            Object.entries(grades).forEach(([subject, grade]) => {
+                const row = document.createElement('tr');
+                const iconData = subjectIcons[subject];
+                
+                const message = grade >= 7 
+                    ? '<div class="message success"><i class="fas fa-trophy"></i> ¡Excelente trabajo! Has alcanzado un promedio destacado.</div>'
+                    : '<div class="message motivational"><i class="fas fa-heart"></i> ¡Sigue esforzándote! Con dedicación mejorarás en la próxima etapa.</div>';
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="subject-cell">
+                            <div class="subject-icon" style="background: ${iconData.color}">
+                                <i class="fas ${iconData.icon}"></i>
+                            </div>
+                            ${subject}
+                        </div>
+                    </td>
+                    <td><span class="grade">${grade.toFixed(2)}</span></td>
+                    <td>${message}</td>
+                `;
+                tbody.appendChild(row);
+                
+                total += grade;
+                count++;
+            });
+
+            const average = total / count;
+            document.getElementById('averageValue').textContent = average.toFixed(2);
+            
+            const generalMsg = average >= 7
+                ? '🎉 ¡Felicitaciones! Tu rendimiento general es excelente. Continúa así.'
+                : '💪 Tienes potencial para mejorar. ¡El esfuerzo siempre da frutos!';
+            
+            document.getElementById('generalMessage').textContent = generalMsg;
+            document.getElementById('reportCard').style.display = 'block';
+            
+            // Smooth scroll to report
+            document.getElementById('reportCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportToPDF() {
+            const button = document.getElementById('pdfButton');
+            const studentName = document.getElementById('studentSelect').value;
+            
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF...';
+            
+            const doc = new jsPDF();
+            const grades = studentsData[studentName];
+            
+            // Configurar colores
+            const primaryColor = [102, 126, 234];
+            const secondaryColor = [118, 75, 162];
+            const successColor = [17, 153, 142];
+            const warningColor = [250, 112, 154];
+            
+            // Encabezado con fondo de color
+            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.rect(0, 0, 210, 55, 'F');
+            
+            // Título principal
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.text('UNIDAD EDUCATIVA PCEI "TUNGURAHUA"', 105, 15, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text('MODALIDAD EXTRAORDINARIA INTENSIVA', 105, 25, { align: 'center' });
+            doc.text('PERIODO LECTIVO 2024-2025', 105, 32, { align: 'center' });
+            doc.text('Distrito: Ambato 18D02', 105, 39, { align: 'center' });
+            doc.text('Docente: Msc. Javier Nunez', 105, 46, { align: 'center' });
+            
+            // Información del estudiante
+            doc.setFillColor(240, 147, 251);
+            doc.rect(15, 60, 180, 20, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('Estudiante: ' + studentName, 20, 72);
+            
+            // Preparar datos de la tabla
+            const tableData = [];
+            let total = 0;
+            let count = 0;
+            
+            Object.entries(grades).forEach(([subject, grade]) => {
+                const message = grade >= 7 
+                    ? 'Excelente trabajo! Has alcanzado un promedio destacado.'
+                    : 'Sigue esforzandote! Con dedicacion mejoraras en la proxima etapa.';
+                
+                tableData.push([
+                    subject,
+                    grade.toFixed(2),
+                    message
+                ]);
+                
+                total += grade;
+                count++;
+            });
+            
+            const average = total / count;
+            
+            // Tabla de calificaciones con autoTable
+            doc.autoTable({
+                startY: 90,
+                head: [['Asignatura', 'Promedio', 'Observacion']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: primaryColor,
+                    textColor: [255, 255, 255],
+                    fontSize: 11,
+                    fontStyle: 'bold',
+                    halign: 'left'
+                },
+                bodyStyles: {
+                    fontSize: 10,
+                    cellPadding: 6
+                },
+                columnStyles: {
+                    0: { cellWidth: 50, fontStyle: 'bold' },
+                    1: { cellWidth: 25, halign: 'center', fontStyle: 'bold', textColor: primaryColor },
+                    2: { cellWidth: 105 }
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 247, 250]
+                },
+                didParseCell: function(data) {
+                    // Colorear las observaciones según el promedio
+                    if (data.column.index === 2 && data.section === 'body') {
+                        const gradeValue = parseFloat(tableData[data.row.index][1]);
+                        if (gradeValue >= 7) {
+                            data.cell.styles.textColor = successColor;
+                            data.cell.styles.fontStyle = 'bold';
+                        } else {
+                            data.cell.styles.textColor = warningColor;
+                            data.cell.styles.fontStyle = 'bold';
+                        }
+                    }
+                },
+                margin: { left: 15, right: 15 }
+            });
+            
+            // Promedio general
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.rect(15, finalY, 180, 35, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('PROMEDIO GENERAL', 105, finalY + 10, { align: 'center' });
+            
+            doc.setFontSize(24);
+            doc.text(average.toFixed(2), 105, finalY + 22, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const generalMsg = average >= 7
+                ? 'Felicitaciones! Tu rendimiento general es excelente. Continua asi.'
+                : 'Tienes potencial para mejorar. El esfuerzo siempre da frutos!';
+            doc.text(generalMsg, 105, finalY + 30, { align: 'center' });
+            
+            // Guardar PDF
+            doc.save(`Libreta_${studentName.replace(/ /g, '_')}.pdf`);
+            
+            // Restaurar botón
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-file-pdf"></i> Exportar como PDF';
+        }
+    </script>
+</body>
+</html>
