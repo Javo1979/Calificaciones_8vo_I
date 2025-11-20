@@ -195,6 +195,13 @@
             color: #667eea;
         }
 
+        .grade-sn {
+            font-weight: bold;
+            font-size: 18px;
+            color: #999;
+            font-style: italic;
+        }
+
         .message {
             padding: 15px 20px;
             border-radius: 8px;
@@ -213,6 +220,14 @@
         .motivational {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .no-grade {
+            background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 100%);
+            color: white;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -288,7 +303,7 @@
             <h1>UNIDAD EDUCATIVA PCEI "TUNGURAHUA"</h1>
             <p>MODALIDAD EXTRAORDINARIA INTENSIVA - PERIODO LECTIVO 2024-2025</p>
             <p><i class="fas fa-map-marker-alt"></i> Distrito: Ambato 18D02</p>
-            <p><i class="fas fa-user"></i> Docente: Msc. Javier Núñez</p>
+            <p><i class="fas fa-chalkboard-teacher"></i> Docente: Msc. Javier Núñez</p>
         </div>
 
         <div class="selection-area" id="selectionArea">
@@ -335,125 +350,20 @@
         const { jsPDF } = window.jspdf;
 
         const studentsData = {
-            "BOMBOZA NUÑEZ ALAN DAVID": {
-                "Educación Artística": 7.26,
-                "Estudios Sociales": 7.26
-            },
-            "CHISAG POAQUIZA BRYAN NEICER": {
-                "Matemática": 8.30,
-                "Lengua y Literatura": 8.80,
-                "Educación Artística": 7.26,
-                "Educación Física": 7.30,
-                "Inglés": 7.21,
-                "Ciencias Naturales": 8.80,
-                "Estudios Sociales": 8.06,
-                "Cívica": 9.00
-            },
-            "CHUCUYAN ANGAMARCA CARLOS VINICIO": {
-                "Matemática": 8.93,
-                "Lengua y Literatura": 9.46,
-                "Educación Artística": 8.86,
-                "Educación Física": 9.33,
-                "Inglés": 8.91,
-                "Ciencias Naturales": 9.20,
-                "Cívica": 9.53
-            },
-            "CURAY FREIRE MARTHA SUSANA": {
-                "Matemática": 7.00,
-                "Lengua y Literatura": 9.00,
-                "Educación Artística": 7.00,
-                "Educación Física": 7.36,
-                "Inglés": 7.48,
-                "Ciencias Naturales": 9.00,
-                "Estudios Sociales": 7.00,
-                "Cívica": 7.00
-            },
-            "GALARZA CAIZA EDGAR PATRICIO": {
-                "Educación Artística": 7.00,
-                "Estudios Sociales": 7.00
-            },
-            "GARCES POAQUIZA AMELIA MICHELLE": {
-                "Matemática": 8.60,
-                "Lengua y Literatura": 8.66,
-                "Educación Artística": 8.09,
-                "Educación Física": 9.73,
-                "Inglés": 8.64,
-                "Ciencias Naturales": 9.13,
-                "Estudios Sociales": 7.24,
-                "Cívica": 8.93
-            },
-            "GIRALDO MONTENEGRO DIGNA MARIBEL": {
-                "Matemática": 9.20,
-                "Lengua y Literatura": 9.20,
-                "Educación Artística": 8.93,
-                "Educación Física": 9.33,
-                "Inglés": 8.28,
-                "Ciencias Naturales": 9.73,
-                "Estudios Sociales": 9.31,
-                "Cívica": 9.33
-            },
-            "GIRALDO MONTENEGRO GLENDA KATHERINE": {
-                "Matemática": 8.60,
-                "Lengua y Literatura": 9.33,
-                "Educación Artística": 9.20,
-                "Educación Física": 10.00,
-                "Inglés": 8.46,
-                "Ciencias Naturales": 10.00,
-                "Estudios Sociales": 9.40,
-                "Cívica": 9.46
-            },
-            "GUATATUCA PEREZ JHOLAO WALTER": {
-                "Ciencias Naturales": 8.33
-            },
-            "ILLANES ARIUCURI JIMMY ROLANDO": {
-                "Matemática": 7.86,
-                "Lengua y Literatura": 7.13,
-                "Educación Física": 7.00,
-                "Inglés": 8.28,
-                "Ciencias Naturales": 8.46,
-                "Estudios Sociales": 6.60,
-                "Cívica": 7.53
-            },
-            "MANOBANDA TELENCHANA LOURDES MARIA": {
-                "Matemática": 8.13,
-                "Lengua y Literatura": 9.26,
-                "Educación Artística": 7.41,
-                "Educación Física": 9.00,
-                "Inglés": 8.53,
-                "Ciencias Naturales": 8.20,
-                "Estudios Sociales": 8.33,
-                "Cívica": 9.40
-            },
-            "MINTA ANDRANGO GLADYS GABRIELA": {
-                "Matemática": 8.65,
-                "Lengua y Literatura": 9.80,
-                "Educación Artística": 9.44,
-                "Educación Física": 8.22,
-                "Inglés": 9.27,
-                "Ciencias Naturales": 9.13,
-                "Estudios Sociales": 9.21,
-                "Cívica": 9.80
-            },
-            "RUIZ PEÑALOZA ROSENDO DANILO": {
-                "Matemática": 8.60,
-                "Lengua y Literatura": 9.46,
-                "Educación Artística": 9.53,
-                "Educación Física": 8.73,
-                "Inglés": 9.71,
-                "Ciencias Naturales": 9.13,
-                "Estudios Sociales": 7.76,
-                "Cívica": 9.73
-            },
-            "TIBAN TIPAN EDISSON FERNANDO": {
-                "Matemática": 8.03,
-                "Lengua y Literatura": 9.53,
-                "Educación Artística": 9.19,
-                "Educación Física": 8.00,
-                "Inglés": 8.33,
-                "Ciencias Naturales": 9.53,
-                "Estudios Sociales": 9.48,
-                "Cívica": 9.53
-            }
+            "BOMBOZA NUÑEZ ALAN DAVID": {"Matemática": "SN", "Lengua y Literatura": "SN", "Educación Artística": 7.26, "Educación Física": "SN", "Inglés": "SN", "Ciencias Naturales": "SN", "Estudios Sociales": 7.26, "Cívica": "SN"},
+            "CHISAG POAQUIZA BRYAN NEICER": {"Matemática": 8.3, "Lengua y Literatura": 8.8, "Educación Artística": 7.26, "Educación Física": 7.3, "Inglés": 7.21, "Ciencias Naturales": 8.8, "Estudios Sociales": 8.06, "Cívica": 9.0},
+            "CHUCUYAN ANGAMARCA CARLOS VINICIO": {"Matemática": 8.93, "Lengua y Literatura": 9.46, "Educación Artística": 8.86, "Educación Física": 9.33, "Inglés": 8.91, "Ciencias Naturales": 9.2, "Estudios Sociales": "SN", "Cívica": 9.53},
+            "CURAY FREIRE MARTHA SUSANA": {"Matemática": 7.0, "Lengua y Literatura": 9.0, "Educación Artística": 7.0, "Educación Física": 7.36, "Inglés": 7.48, "Ciencias Naturales": 9.0, "Estudios Sociales": 7.0, "Cívica": 7.0},
+            "GALARZA CAIZA EDGAR PATRICIO": {"Matemática": "SN", "Lengua y Literatura": "SN", "Educación Artística": 7.0, "Educación Física": "SN", "Inglés": "SN", "Ciencias Naturales": "SN", "Estudios Sociales": 7.0, "Cívica": "SN"},
+            "GARCES POAQUIZA AMELIA MICHELLE": {"Matemática": 8.6, "Lengua y Literatura": 8.66, "Educación Artística": 8.09, "Educación Física": 9.73, "Inglés": 8.64, "Ciencias Naturales": 9.13, "Estudios Sociales": 7.24, "Cívica": 8.93},
+            "GIRALDO MONTENEGRO DIGNA MARIBEL": {"Matemática": 9.2, "Lengua y Literatura": 9.2, "Educación Artística": 8.93, "Educación Física": 9.33, "Inglés": 8.28, "Ciencias Naturales": 9.73, "Estudios Sociales": 9.31, "Cívica": 9.33},
+            "GIRALDO MONTENEGRO GLENDA KATHERINE": {"Matemática": 8.6, "Lengua y Literatura": 9.33, "Educación Artística": 9.2, "Educación Física": 10.0, "Inglés": 8.46, "Ciencias Naturales": 10.0, "Estudios Sociales": 9.4, "Cívica": 9.46},
+            "GUATATUCA PEREZ JHOLAO WALTER": {"Matemática": "SN", "Lengua y Literatura": "SN", "Educación Artística": "SN", "Educación Física": "SN", "Inglés": "SN", "Ciencias Naturales": 8.33, "Estudios Sociales": "SN", "Cívica": "SN"},
+            "ILLANES ARIUCURI JIMMY ROLANDO": {"Matemática": 7.86, "Lengua y Literatura": 7.13, "Educación Artística": "SN", "Educación Física": 7.0, "Inglés": 8.28, "Ciencias Naturales": 8.46, "Estudios Sociales": 6.6, "Cívica": 7.53},
+            "MANOBANDA TELENCHANA LOURDES MARIA": {"Matemática": 8.13, "Lengua y Literatura": 9.26, "Educación Artística": 7.41, "Educación Física": 9.0, "Inglés": 8.53, "Ciencias Naturales": 8.2, "Estudios Sociales": 8.33, "Cívica": 9.4},
+            "MINTA ANDRANGO GLADYS GABRIELA": {"Matemática": 8.65, "Lengua y Literatura": 9.8, "Educación Artística": 9.44, "Educación Física": 8.22, "Inglés": 9.27, "Ciencias Naturales": 9.13, "Estudios Sociales": 9.21, "Cívica": 9.8},
+            "RUIZ PEÑALOZA ROSENDO DANILO": {"Matemática": 8.6, "Lengua y Literatura": 9.46, "Educación Artística": 9.53, "Educación Física": 8.73, "Inglés": 9.71, "Ciencias Naturales": 9.13, "Estudios Sociales": 7.76, "Cívica": 9.73},
+            "TIBAN TIPAN EDISSON FERNANDO": {"Matemática": 8.03, "Lengua y Literatura": 9.53, "Educación Artística": 9.19, "Educación Física": 8.0, "Inglés": 8.33, "Ciencias Naturales": 9.53, "Estudios Sociales": 9.48, "Cívica": 9.53}
         };
 
         const subjectIcons = {
@@ -464,7 +374,7 @@
             "Inglés": { icon: "fa-language", color: "#AB47BC" },
             "Ciencias Naturales": { icon: "fa-flask", color: "#4CAF50" },
             "Estudios Sociales": { icon: "fa-globe", color: "#42A5F5" },
-            "Cívica": { icon: "fa-balance-scale", color: "#9C27B0" }
+            "Cívica": { icon: "fa-landmark", color: "#9C27B0" }
         };
 
         // Populate student dropdown
@@ -496,9 +406,20 @@
                 const row = document.createElement('tr');
                 const iconData = subjectIcons[subject];
                 
-                const message = grade >= 7 
-                    ? '<div class="message success"><i class="fas fa-trophy"></i> ¡Excelente trabajo! Has alcanzado un promedio destacado.</div>'
-                    : '<div class="message motivational"><i class="fas fa-heart"></i> ¡Sigue esforzándote! Con dedicación mejorarás en la próxima etapa.</div>';
+                let gradeDisplay = '';
+                let message = '';
+                
+                if (grade === "SN") {
+                    gradeDisplay = '<span class="grade-sn">SN</span>';
+                    message = '<div class="message no-grade"><i class="fas fa-info-circle"></i> Sin nota registrada.</div>';
+                } else {
+                    gradeDisplay = `<span class="grade">${grade.toFixed(2)}</span>`;
+                    message = grade >= 7 
+                        ? '<div class="message success"><i class="fas fa-trophy"></i> ¡Excelente trabajo! Has alcanzado un promedio destacado.</div>'
+                        : '<div class="message motivational"><i class="fas fa-heart"></i> ¡Sigue esforzándote! Con dedicación mejorarás en la próxima etapa.</div>';
+                    total += grade;
+                    count++;
+                }
                 
                 row.innerHTML = `
                     <td>
@@ -509,21 +430,20 @@
                             ${subject}
                         </div>
                     </td>
-                    <td><span class="grade">${grade.toFixed(2)}</span></td>
+                    <td>${gradeDisplay}</td>
                     <td>${message}</td>
                 `;
                 tbody.appendChild(row);
-                
-                total += grade;
-                count++;
             });
 
-            const average = total / count;
-            document.getElementById('averageValue').textContent = average.toFixed(2);
+            const average = count > 0 ? total / count : 0;
+            document.getElementById('averageValue').textContent = average > 0 ? average.toFixed(2) : 'N/A';
             
-            const generalMsg = average >= 7
-                ? '🎉 ¡Felicitaciones! Tu rendimiento general es excelente. Continúa así.'
-                : '💪 Tienes potencial para mejorar. ¡El esfuerzo siempre da frutos!';
+            const generalMsg = count === 0 
+                ? 'No hay calificaciones registradas.'
+                : average >= 7
+                    ? '🎉 ¡Felicitaciones! Tu rendimiento general es excelente. Continúa así.'
+                    : '💪 Tienes potencial para mejorar. ¡El esfuerzo siempre da frutos!';
             
             document.getElementById('generalMessage').textContent = generalMsg;
             document.getElementById('reportCard').style.display = 'block';
@@ -547,6 +467,7 @@
             const secondaryColor = [118, 75, 162];
             const successColor = [17, 153, 142];
             const warningColor = [250, 112, 154];
+            const grayColor = [158, 158, 158];
             
             // Encabezado con fondo de color
             doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
@@ -579,21 +500,25 @@
             let count = 0;
             
             Object.entries(grades).forEach(([subject, grade]) => {
-                const message = grade >= 7 
-                    ? 'Excelente trabajo! Has alcanzado un promedio destacado.'
-                    : 'Sigue esforzandote! Con dedicacion mejoraras en la proxima etapa.';
+                let gradeStr = '';
+                let message = '';
                 
-                tableData.push([
-                    subject,
-                    grade.toFixed(2),
-                    message
-                ]);
+                if (grade === "SN") {
+                    gradeStr = 'SN';
+                    message = 'Sin nota registrada.';
+                } else {
+                    gradeStr = grade.toFixed(2);
+                    message = grade >= 7 
+                        ? 'Excelente trabajo! Has alcanzado un promedio destacado.'
+                        : 'Sigue esforzandote! Con dedicacion mejoraras en la proxima etapa.';
+                    total += grade;
+                    count++;
+                }
                 
-                total += grade;
-                count++;
+                tableData.push([subject, gradeStr, message]);
             });
             
-            const average = total / count;
+            const average = count > 0 ? total / count : 0;
             
             // Tabla de calificaciones con autoTable
             doc.autoTable({
@@ -613,23 +538,38 @@
                     cellPadding: 6
                 },
                 columnStyles: {
-                    0: { cellWidth: 50, fontStyle: 'bold' },
-                    1: { cellWidth: 25, halign: 'center', fontStyle: 'bold', textColor: primaryColor },
-                    2: { cellWidth: 105 }
+                    0: { cellWidth: 60, fontStyle: 'bold' },
+                    1: { cellWidth: 25, halign: 'center', fontStyle: 'bold' },
+                    2: { cellWidth: 95 }
                 },
                 alternateRowStyles: {
                     fillColor: [245, 247, 250]
                 },
                 didParseCell: function(data) {
-                    // Colorear las observaciones según el promedio
-                    if (data.column.index === 2 && data.section === 'body') {
-                        const gradeValue = parseFloat(tableData[data.row.index][1]);
-                        if (gradeValue >= 7) {
-                            data.cell.styles.textColor = successColor;
-                            data.cell.styles.fontStyle = 'bold';
+                    // Colorear según el tipo de calificación
+                    if (data.column.index === 1 && data.section === 'body') {
+                        const gradeValue = tableData[data.row.index][1];
+                        if (gradeValue === 'SN') {
+                            data.cell.styles.textColor = grayColor;
+                            data.cell.styles.fontStyle = 'italic';
                         } else {
-                            data.cell.styles.textColor = warningColor;
-                            data.cell.styles.fontStyle = 'bold';
+                            data.cell.styles.textColor = primaryColor;
+                        }
+                    }
+                    if (data.column.index === 2 && data.section === 'body') {
+                        const gradeValue = tableData[data.row.index][1];
+                        if (gradeValue === 'SN') {
+                            data.cell.styles.textColor = grayColor;
+                            data.cell.styles.fontStyle = 'italic';
+                        } else {
+                            const numGrade = parseFloat(gradeValue);
+                            if (numGrade >= 7) {
+                                data.cell.styles.textColor = successColor;
+                                data.cell.styles.fontStyle = 'bold';
+                            } else {
+                                data.cell.styles.textColor = warningColor;
+                                data.cell.styles.fontStyle = 'bold';
+                            }
                         }
                     }
                 },
@@ -647,13 +587,15 @@
             doc.text('PROMEDIO GENERAL', 105, finalY + 10, { align: 'center' });
             
             doc.setFontSize(24);
-            doc.text(average.toFixed(2), 105, finalY + 22, { align: 'center' });
+            doc.text(average > 0 ? average.toFixed(2) : 'N/A', 105, finalY + 22, { align: 'center' });
             
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
-            const generalMsg = average >= 7
-                ? 'Felicitaciones! Tu rendimiento general es excelente. Continua asi.'
-                : 'Tienes potencial para mejorar. El esfuerzo siempre da frutos!';
+            const generalMsg = count === 0
+                ? 'No hay calificaciones registradas.'
+                : average >= 7
+                    ? 'Felicitaciones! Tu rendimiento general es excelente. Continua asi.'
+                    : 'Tienes potencial para mejorar. El esfuerzo siempre da frutos!';
             doc.text(generalMsg, 105, finalY + 30, { align: 'center' });
             
             // Guardar PDF
@@ -666,3 +608,4 @@
     </script>
 </body>
 </html>
+
