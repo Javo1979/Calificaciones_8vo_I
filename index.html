@@ -1,611 +1,441 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Libreta de Calificaciones - PCEI Tungurahua</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de material didáctico - Matemática</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script id="mathjax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --primary: #4b72f2;
+      --secondary: #2f3f64;
+      --muted: #6b7280;
+      --surface: #f5f7fb;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
-            width: 100%;
-            overflow: hidden;
-            animation: fadeIn 0.5s ease-in;
-        }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+      min-height: 100vh;
+      color: #1f2937;
+      padding: 32px 18px 60px;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+    header {
+      padding: 26px 32px 18px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+    }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    header h1 {
+      font-size: 26px;
+      color: var(--secondary);
+      margin-bottom: 6px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
 
-        .header p {
-            font-size: 14px;
-            opacity: 0.95;
-            margin: 5px 0;
-        }
+    header p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
 
-        .selection-area {
-            padding: 40px;
-            text-align: center;
-            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
-        }
+    .input-panel {
+      padding: 24px 32px 28px;
+      background: var(--surface);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
 
-        .selection-area h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+    label {
+      font-weight: 600;
+      color: var(--secondary);
+      font-size: 15px;
+    }
 
-        select {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px 20px;
-            font-size: 16px;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-        }
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      padding: 14px 12px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      resize: vertical;
+      background: #fff;
+    }
 
-        select:hover {
-            border-color: #764ba2;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
+    textarea:focus {
+      border-color: var(--primary);
+      outline: 2px solid rgba(75, 114, 242, 0.2);
+    }
 
-        select:focus {
-            border-color: #764ba2;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-        .report-card {
-            padding: 40px;
-            display: none;
-            animation: slideIn 0.5s ease-out;
-        }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
+      font-size: 15px;
+    }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+    .primary {
+      background: linear-gradient(135deg, #4b72f2, #596bff);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(75, 114, 242, 0.25);
+    }
 
-        .student-info {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+    .secondary {
+      background: #e5e7eb;
+      color: var(--secondary);
+    }
 
-        .student-info i {
-            font-size: 40px;
-        }
+    button:hover {
+      transform: translateY(-1px);
+    }
 
-        .student-info h3 {
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
+    .material {
+      padding: 32px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
 
-        thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+    .section-title {
+      color: var(--secondary);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
 
-        th {
-            padding: 18px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .section-title span {
+      color: var(--primary);
+      margin-right: 8px;
+    }
 
-        tbody tr {
-            border-bottom: 1px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
+    ul {
+      padding-left: 20px;
+      line-height: 1.6;
+      color: #374151;
+    }
 
-        tbody tr:hover {
-            background-color: #f8f9fa;
-        }
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
 
-        tbody tr:last-child {
-            border-bottom: none;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
 
-        td {
-            padding: 18px;
-            font-size: 15px;
-        }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
 
-        .subject-cell {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
-            color: #333;
-        }
+    th {
+      background: #f1f5f9;
+      color: var(--secondary);
+    }
 
-        .subject-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: white;
-        }
+    .header-block {
+      text-align: center;
+      line-height: 1.5;
+    }
 
-        .grade {
-            font-weight: bold;
-            font-size: 18px;
-            color: #667eea;
-        }
+    .header-block h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 4px;
+      color: var(--secondary);
+    }
 
-        .grade-sn {
-            font-weight: bold;
-            font-size: 18px;
-            color: #999;
-            font-style: italic;
-        }
+    .highlight {
+      background: #eef2ff;
+      border-left: 4px solid var(--primary);
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: #374151;
+      margin: 8px 0 12px;
+    }
 
-        .message {
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+    .print-note {
+      font-size: 13px;
+      color: var(--muted);
+    }
 
-        .success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .motivational {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .no-grade {
-            background: linear-gradient(135deg, #9e9e9e 0%, #bdbdbd 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .average-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .average-section h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .average-value {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .pdf-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .pdf-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-            }
-            
-            table {
-                font-size: 13px;
-            }
-            
-            th, td {
-                padding: 12px 8px;
-            }
-        }
-    </style>
+    @media print {
+      body { background: #fff; padding: 0; }
+      .app { box-shadow: none; border: none; }
+      .input-panel, .actions { display: none; }
+      header { border-bottom: none; }
+      .material { padding: 24px; }
+      button { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <i class="fas fa-graduation-cap" style="font-size: 50px; margin-bottom: 15px;"></i>
-            <h1>UNIDAD EDUCATIVA PCEI "TUNGURAHUA"</h1>
-            <p>MODALIDAD EXTRAORDINARIA INTENSIVA - PERIODO LECTIVO 2024-2025</p>
-            <p><i class="fas fa-map-marker-alt"></i> Distrito: Ambato 18D02</p>
-            <p><i class="fas fa-chalkboard-teacher"></i> Docente: Msc. Javier Núñez</p>
-        </div>
+  <div class="app">
+    <header>
+      <h1>Generador de material didáctico - Matemática</h1>
+      <p>Diseñado para personas jóvenes y adultas de educación secundaria en modalidad virtual. Escribe un tema o destreza y obtén material listo para usar y exportar a PDF.</p>
+    </header>
 
-        <div class="selection-area" id="selectionArea">
-            <h2><i class="fas fa-user-graduate"></i> Selecciona tu nombre</h2>
-            <select id="studentSelect" onchange="showReport()">
-                <option value="">-- Selecciona un estudiante --</option>
-            </select>
-        </div>
-
-        <div class="report-card" id="reportCard">
-            <div class="student-info">
-                <i class="fas fa-user-circle"></i>
-                <div>
-                    <h3 id="studentName"></h3>
-                    <p>Libreta de Calificaciones</p>
-                </div>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th><i class="fas fa-book"></i> Asignatura</th>
-                        <th><i class="fas fa-star"></i> Promedio</th>
-                        <th><i class="fas fa-comment"></i> Observación</th>
-                    </tr>
-                </thead>
-                <tbody id="gradesTable">
-                </tbody>
-            </table>
-
-            <div class="average-section">
-                <h3><i class="fas fa-chart-line"></i> Promedio General</h3>
-                <div class="average-value" id="averageValue">0.00</div>
-                <p id="generalMessage"></p>
-            </div>
-
-            <button class="pdf-button" id="pdfButton" onclick="exportToPDF()">
-                <i class="fas fa-file-pdf"></i> Exportar como PDF
-            </button>
-        </div>
+    <div class="input-panel">
+      <div>
+        <label for="topicInput">Tema o destreza</label>
+        <textarea id="topicInput" placeholder="Ejemplo: Resolver ecuaciones lineales con una incógnita"></textarea>
+      </div>
+      <div class="actions">
+        <button class="primary" id="generateBtn">Generar material</button>
+        <button class="secondary" id="exampleBtn">Usar ejemplo: Ecuaciones lineales</button>
+        <button class="secondary" id="pdfBtn">Exportar a PDF / Imprimir</button>
+      </div>
+      <p class="print-note">El PDF se genera usando la opción de impresión del navegador (tamaño A4, orientación vertical).</p>
     </div>
 
-    <script>
-        const { jsPDF } = window.jspdf;
+    <div class="material" id="material"></div>
+  </div>
 
-        const studentsData = {
-            "BOMBOZA NUÑEZ ALAN DAVID": {"Matemática": "SN", "Lengua y Literatura": "SN", "Educación Artística": 7.26, "Educación Física": "SN", "Inglés": "SN", "Ciencias Naturales": "SN", "Estudios Sociales": 7.26, "Cívica": "SN"},
-            "CHISAG POAQUIZA BRYAN NEICER": {"Matemática": 8.3, "Lengua y Literatura": 8.8, "Educación Artística": 7.26, "Educación Física": 7.3, "Inglés": 7.21, "Ciencias Naturales": 8.8, "Estudios Sociales": 8.06, "Cívica": 9.0},
-            "CHUCUYAN ANGAMARCA CARLOS VINICIO": {"Matemática": 8.93, "Lengua y Literatura": 9.46, "Educación Artística": 8.86, "Educación Física": 9.33, "Inglés": 8.91, "Ciencias Naturales": 9.2, "Estudios Sociales": "SN", "Cívica": 9.53},
-            "CURAY FREIRE MARTHA SUSANA": {"Matemática": 7.0, "Lengua y Literatura": 9.0, "Educación Artística": 7.0, "Educación Física": 7.36, "Inglés": 7.48, "Ciencias Naturales": 9.0, "Estudios Sociales": 7.0, "Cívica": 7.0},
-            "GALARZA CAIZA EDGAR PATRICIO": {"Matemática": "SN", "Lengua y Literatura": "SN", "Educación Artística": 7.0, "Educación Física": "SN", "Inglés": "SN", "Ciencias Naturales": "SN", "Estudios Sociales": 7.0, "Cívica": "SN"},
-            "GARCES POAQUIZA AMELIA MICHELLE": {"Matemática": 8.6, "Lengua y Literatura": 8.66, "Educación Artística": 8.09, "Educación Física": 9.73, "Inglés": 8.64, "Ciencias Naturales": 9.13, "Estudios Sociales": 7.24, "Cívica": 8.93},
-            "GIRALDO MONTENEGRO DIGNA MARIBEL": {"Matemática": 9.2, "Lengua y Literatura": 9.2, "Educación Artística": 8.93, "Educación Física": 9.33, "Inglés": 8.28, "Ciencias Naturales": 9.73, "Estudios Sociales": 9.31, "Cívica": 9.33},
-            "GIRALDO MONTENEGRO GLENDA KATHERINE": {"Matemática": 8.6, "Lengua y Literatura": 9.33, "Educación Artística": 9.2, "Educación Física": 10.0, "Inglés": 8.46, "Ciencias Naturales": 10.0, "Estudios Sociales": 9.4, "Cívica": 9.46},
-            "GUATATUCA PEREZ JHOLAO WALTER": {"Matemática": "SN", "Lengua y Literatura": "SN", "Educación Artística": "SN", "Educación Física": "SN", "Inglés": "SN", "Ciencias Naturales": 8.33, "Estudios Sociales": "SN", "Cívica": "SN"},
-            "ILLANES ARIUCURI JIMMY ROLANDO": {"Matemática": 7.86, "Lengua y Literatura": 7.13, "Educación Artística": "SN", "Educación Física": 7.0, "Inglés": 8.28, "Ciencias Naturales": 8.46, "Estudios Sociales": 6.6, "Cívica": 7.53},
-            "MANOBANDA TELENCHANA LOURDES MARIA": {"Matemática": 8.13, "Lengua y Literatura": 9.26, "Educación Artística": 7.41, "Educación Física": 9.0, "Inglés": 8.53, "Ciencias Naturales": 8.2, "Estudios Sociales": 8.33, "Cívica": 9.4},
-            "MINTA ANDRANGO GLADYS GABRIELA": {"Matemática": 8.65, "Lengua y Literatura": 9.8, "Educación Artística": 9.44, "Educación Física": 8.22, "Inglés": 9.27, "Ciencias Naturales": 9.13, "Estudios Sociales": 9.21, "Cívica": 9.8},
-            "RUIZ PEÑALOZA ROSENDO DANILO": {"Matemática": 8.6, "Lengua y Literatura": 9.46, "Educación Artística": 9.53, "Educación Física": 8.73, "Inglés": 9.71, "Ciencias Naturales": 9.13, "Estudios Sociales": 7.76, "Cívica": 9.73},
-            "TIBAN TIPAN EDISSON FERNANDO": {"Matemática": 8.03, "Lengua y Literatura": 9.53, "Educación Artística": 9.19, "Educación Física": 8.0, "Inglés": 8.33, "Ciencias Naturales": 9.53, "Estudios Sociales": 9.48, "Cívica": 9.53}
-        };
+  <script>
+    const materialContainer = document.getElementById('material');
+    const topicInput = document.getElementById('topicInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const exampleBtn = document.getElementById('exampleBtn');
+    const pdfBtn = document.getElementById('pdfBtn');
 
-        const subjectIcons = {
-            "Matemática": { icon: "fa-calculator", color: "#26A69A" },
-            "Lengua y Literatura": { icon: "fa-pen-fancy", color: "#EC407A" },
-            "Educación Artística": { icon: "fa-palette", color: "#FF6B6B" },
-            "Educación Física": { icon: "fa-running", color: "#FFA726" },
-            "Inglés": { icon: "fa-language", color: "#AB47BC" },
-            "Ciencias Naturales": { icon: "fa-flask", color: "#4CAF50" },
-            "Estudios Sociales": { icon: "fa-globe", color: "#42A5F5" },
-            "Cívica": { icon: "fa-landmark", color: "#9C27B0" }
-        };
+    const defaultTopic = 'Ecuaciones lineales';
 
-        // Populate student dropdown
-        const select = document.getElementById('studentSelect');
-        Object.keys(studentsData).forEach(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            select.appendChild(option);
-        });
+    function sentenceCase(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return '';
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    }
 
-        function showReport() {
-            const studentName = document.getElementById('studentSelect').value;
-            if (!studentName) {
-                document.getElementById('reportCard').style.display = 'none';
-                return;
-            }
+    function buildObjectives(topic) {
+      return [
+        `Resolver problemas cotidianos aplicando ${topic.toLowerCase()} con procedimientos claros.`,
+        `Explicar los pasos realizados usando vocabulario sencillo y respetuoso.`,
+        `Verificar los resultados reemplazando valores en la expresión original.`,
+        `Fortalecer la confianza matemática practicando de forma autónoma en modalidad virtual.`
+      ];
+    }
 
-            const grades = studentsData[studentName];
-            document.getElementById('studentName').textContent = studentName;
-            
-            const tbody = document.getElementById('gradesTable');
-            tbody.innerHTML = '';
-            
-            let total = 0;
-            let count = 0;
+    function buildPriorKnowledge(topic) {
+      return [
+        'Operaciones básicas con números enteros y fracciones.',
+        'Propiedad distributiva y manejo de paréntesis.',
+        `Comprensión de la igualdad y el equilibrio en ${topic.toLowerCase()}.`
+      ];
+    }
 
-            Object.entries(grades).forEach(([subject, grade]) => {
-                const row = document.createElement('tr');
-                const iconData = subjectIcons[subject];
-                
-                let gradeDisplay = '';
-                let message = '';
-                
-                if (grade === "SN") {
-                    gradeDisplay = '<span class="grade-sn">SN</span>';
-                    message = '<div class="message no-grade"><i class="fas fa-info-circle"></i> Sin nota registrada.</div>';
-                } else {
-                    gradeDisplay = `<span class="grade">${grade.toFixed(2)}</span>`;
-                    message = grade >= 7 
-                        ? '<div class="message success"><i class="fas fa-trophy"></i> ¡Excelente trabajo! Has alcanzado un promedio destacado.</div>'
-                        : '<div class="message motivational"><i class="fas fa-heart"></i> ¡Sigue esforzándote! Con dedicación mejorarás en la próxima etapa.</div>';
-                    total += grade;
-                    count++;
-                }
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="subject-cell">
-                            <div class="subject-icon" style="background: ${iconData.color}">
-                                <i class="fas ${iconData.icon}"></i>
-                            </div>
-                            ${subject}
-                        </div>
-                    </td>
-                    <td>${gradeDisplay}</td>
-                    <td>${message}</td>
-                `;
-                tbody.appendChild(row);
-            });
+    function buildTheory(topic) {
+      return `
+        <p class="highlight">Recuerda: Mantener el equilibrio en ambos lados de la ecuación evita alterar el resultado.</p>
+        <p><strong>1. Identifica la estructura:</strong> Una ecuación lineal en una incógnita suele escribirse como \( ax + b = c \), donde \( a \), \( b \) y \( c \) son números reales.</p>
+        <p><strong>2. Aísla la incógnita:</strong> Usa operaciones inversas. Por ejemplo, si tienes \( 3x + 4 = 16 \), resta 4 a ambos lados: \( 3x = 12 \). Luego divide para dejar \( x \) solo: \( x = \frac{12}{3} = 4 \).</p>
+        <p><strong>3. Verifica tu respuesta:</strong> Sustituye el valor encontrado en la ecuación original: \( 3(4) + 4 = 16 \Rightarrow 12 + 4 = 16 \). La igualdad se cumple.</p>
+        <p><strong>4. Fracciones y decimales:</strong> Si aparecen fracciones, multiplica ambos lados por el denominador común. Ejemplo: \( \frac{2x - 1}{3} = 5 \). Multiplica por 3: \( 2x - 1 = 15 \), luego suma 1 y divide por 2 para hallar \( x = 8 \).</p>
+      `;
+    }
 
-            const average = count > 0 ? total / count : 0;
-            document.getElementById('averageValue').textContent = average > 0 ? average.toFixed(2) : 'N/A';
-            
-            const generalMsg = count === 0 
-                ? 'No hay calificaciones registradas.'
-                : average >= 7
-                    ? '🎉 ¡Felicitaciones! Tu rendimiento general es excelente. Continúa así.'
-                    : '💪 Tienes potencial para mejorar. ¡El esfuerzo siempre da frutos!';
-            
-            document.getElementById('generalMessage').textContent = generalMsg;
-            document.getElementById('reportCard').style.display = 'block';
-            
-            // Smooth scroll to report
-            document.getElementById('reportCard').scrollIntoView({ behavior: 'smooth' });
-        }
+    function buildExamples(topic) {
+      return `
+        <div class="card">
+          <div class="section-title"><span>➊</span>Ejemplo 1: pasos numerados</div>
+          <ol style="margin-left: 18px; line-height:1.6; color:#374151;">
+            <li>Planteamiento: \( 5x - 7 = 18 \).</li>
+            <li>Suma 7 en ambos lados: \( 5x = 25 \).</li>
+            <li>Divide entre 5 para aislar: \( x = \frac{25}{5} = 5 \).</li>
+            <li>Comprobación: \( 5(5) - 7 = 25 - 7 = 18 \) ✔️.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="section-title"><span>➋</span>Ejemplo 2: con fracciones</div>
+          <ol style="margin-left: 18px; line-height:1.6; color:#374151;">
+            <li>Ecuación: \( \frac{3x + 2}{4} = 5 \).</li>
+            <li>Multiplica por 4: \( 3x + 2 = 20 \).</li>
+            <li>Resta 2: \( 3x = 18 \).</li>
+            <li>Divide entre 3: \( x = \frac{18}{3} = 6 \).</li>
+            <li>Verifica: \( \frac{3(6)+2}{4} = \frac{20}{4} = 5 \) ✔️.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="section-title"><span>➌</span>Ejemplo 3: situación cotidiana</div>
+          <p style="color:#374151; line-height:1.6;">Un emprendimiento vende jugos. Cada jugo deja una ganancia de \( \$1.80 \). Si al final del día la ganancia total fue de \( \$54 \), ¿cuántos jugos se vendieron?</p>
+          <ol style="margin-left: 18px; line-height:1.6; color:#374151;">
+            <li>Plantea: \( 1.80x = 54 \).</li>
+            <li>Divide entre \( 1.80 \): \( x = \frac{54}{1.80} = 30 \).</li>
+            <li>Interpretación: se vendieron 30 jugos en la jornada.</li>
+          </ol>
+        </div>
+      `;
+    }
 
-        function exportToPDF() {
-            const button = document.getElementById('pdfButton');
-            const studentName = document.getElementById('studentSelect').value;
-            
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF...';
-            
-            const doc = new jsPDF();
-            const grades = studentsData[studentName];
-            
-            // Configurar colores
-            const primaryColor = [102, 126, 234];
-            const secondaryColor = [118, 75, 162];
-            const successColor = [17, 153, 142];
-            const warningColor = [250, 112, 154];
-            const grayColor = [158, 158, 158];
-            
-            // Encabezado con fondo de color
-            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-            doc.rect(0, 0, 210, 55, 'F');
-            
-            // Título principal
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(20);
-            doc.setFont(undefined, 'bold');
-            doc.text('UNIDAD EDUCATIVA PCEI "TUNGURAHUA"', 105, 15, { align: 'center' });
-            
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text('MODALIDAD EXTRAORDINARIA INTENSIVA', 105, 25, { align: 'center' });
-            doc.text('PERIODO LECTIVO 2024-2025', 105, 32, { align: 'center' });
-            doc.text('Distrito: Ambato 18D02', 105, 39, { align: 'center' });
-            doc.text('Docente: Msc. Javier Nunez', 105, 46, { align: 'center' });
-            
-            // Información del estudiante
-            doc.setFillColor(240, 147, 251);
-            doc.rect(15, 60, 180, 20, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('Estudiante: ' + studentName, 20, 72);
-            
-            // Preparar datos de la tabla
-            const tableData = [];
-            let total = 0;
-            let count = 0;
-            
-            Object.entries(grades).forEach(([subject, grade]) => {
-                let gradeStr = '';
-                let message = '';
-                
-                if (grade === "SN") {
-                    gradeStr = 'SN';
-                    message = 'Sin nota registrada.';
-                } else {
-                    gradeStr = grade.toFixed(2);
-                    message = grade >= 7 
-                        ? 'Excelente trabajo! Has alcanzado un promedio destacado.'
-                        : 'Sigue esforzandote! Con dedicacion mejoraras en la proxima etapa.';
-                    total += grade;
-                    count++;
-                }
-                
-                tableData.push([subject, gradeStr, message]);
-            });
-            
-            const average = count > 0 ? total / count : 0;
-            
-            // Tabla de calificaciones con autoTable
-            doc.autoTable({
-                startY: 90,
-                head: [['Asignatura', 'Promedio', 'Observacion']],
-                body: tableData,
-                theme: 'grid',
-                headStyles: {
-                    fillColor: primaryColor,
-                    textColor: [255, 255, 255],
-                    fontSize: 11,
-                    fontStyle: 'bold',
-                    halign: 'left'
-                },
-                bodyStyles: {
-                    fontSize: 10,
-                    cellPadding: 6
-                },
-                columnStyles: {
-                    0: { cellWidth: 60, fontStyle: 'bold' },
-                    1: { cellWidth: 25, halign: 'center', fontStyle: 'bold' },
-                    2: { cellWidth: 95 }
-                },
-                alternateRowStyles: {
-                    fillColor: [245, 247, 250]
-                },
-                didParseCell: function(data) {
-                    // Colorear según el tipo de calificación
-                    if (data.column.index === 1 && data.section === 'body') {
-                        const gradeValue = tableData[data.row.index][1];
-                        if (gradeValue === 'SN') {
-                            data.cell.styles.textColor = grayColor;
-                            data.cell.styles.fontStyle = 'italic';
-                        } else {
-                            data.cell.styles.textColor = primaryColor;
-                        }
-                    }
-                    if (data.column.index === 2 && data.section === 'body') {
-                        const gradeValue = tableData[data.row.index][1];
-                        if (gradeValue === 'SN') {
-                            data.cell.styles.textColor = grayColor;
-                            data.cell.styles.fontStyle = 'italic';
-                        } else {
-                            const numGrade = parseFloat(gradeValue);
-                            if (numGrade >= 7) {
-                                data.cell.styles.textColor = successColor;
-                                data.cell.styles.fontStyle = 'bold';
-                            } else {
-                                data.cell.styles.textColor = warningColor;
-                                data.cell.styles.fontStyle = 'bold';
-                            }
-                        }
-                    }
-                },
-                margin: { left: 15, right: 15 }
-            });
-            
-            // Promedio general
-            const finalY = doc.lastAutoTable.finalY + 10;
-            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-            doc.rect(15, finalY, 180, 35, 'F');
-            
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text('PROMEDIO GENERAL', 105, finalY + 10, { align: 'center' });
-            
-            doc.setFontSize(24);
-            doc.text(average > 0 ? average.toFixed(2) : 'N/A', 105, finalY + 22, { align: 'center' });
-            
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            const generalMsg = count === 0
-                ? 'No hay calificaciones registradas.'
-                : average >= 7
-                    ? 'Felicitaciones! Tu rendimiento general es excelente. Continua asi.'
-                    : 'Tienes potencial para mejorar. El esfuerzo siempre da frutos!';
-            doc.text(generalMsg, 105, finalY + 30, { align: 'center' });
-            
-            // Guardar PDF
-            doc.save(`Libreta_${studentName.replace(/ /g, '_')}.pdf`);
-            
-            // Restaurar botón
-            button.disabled = false;
-            button.innerHTML = '<i class="fas fa-file-pdf"></i> Exportar como PDF';
-        }
-    </script>
+    function buildExercises(topic) {
+      const exercises = [
+        'Resuelve: \( 4x + 9 = 41 \).',
+        'Encuentra \( x \) en \( 7x - 5 = 3x + 19 \).',
+        'Aplica el método de balance en \( \frac{x - 2}{3} = 6 \).',
+        'En una compra familiar, el costo total es \( \$96 \). Si cada paquete cuesta \( \$12 \), plantea y resuelve la ecuación para hallar la cantidad de paquetes.',
+        'Un taller virtual paga \( \$8.50 \) por hora. Si deseas ganar \( \$255 \) en una semana, ¿cuántas horas debes trabajar? Plantea y resuelve la ecuación.',
+        'Transforma y resuelve: \( 2(3x - 4) = 5x + 6 \).',
+        'Simplifica y despeja en \( 5(x - 2) + 3 = 2x + 18 \).',
+        'Resuelve con decimales: \( 0.6x + 2.4 = 5.1 \).'
+      ];
+      return `<ul>${exercises.map(e => `<li>${e}</li>`).join('')}</ul>`;
+    }
+
+    function buildSelfCheck(topic) {
+      return `
+        <ul>
+          <li>V/F: En una ecuación, puedo sumar el mismo número en ambos lados sin cambiar la solución.</li>
+          <li>V/F: Si \( 2x = 10 \), entonces \( x = 8 \).</li>
+          <li>Selección: Para despejar \( x \) en \( 6x + 3 = 21 \), el primer paso correcto es: a) dividir para 6, b) restar 3, c) multiplicar por 3.</li>
+          <li>Selección: Si \( \frac{x+4}{2} = 7 \), el valor de \( x \) es: a) 3, b) 10, c) 14.</li>
+        </ul>
+        <p class="highlight">Retroalimentación general: Si dudaste en algún paso, repasa el equilibrio de la ecuación y verifica sustituyendo tu respuesta. Practicar en bloques cortos y constantes fortalece la confianza.</p>
+      `;
+    }
+
+    function buildRubric() {
+      return `
+        <table>
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th>Excelente</th>
+              <th>Satisfactorio</th>
+              <th>En proceso</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Comprensión</td>
+              <td>Explica el procedimiento completo con sus propias palabras.</td>
+              <td>Identifica la mayoría de los pasos necesarios.</td>
+              <td>Necesita apoyo frecuente para entender los pasos.</td>
+            </tr>
+            <tr>
+              <td>Resolución de ejercicios</td>
+              <td>Resuelve correctamente todos los ejercicios y verifica resultados.</td>
+              <td>Resuelve la mayoría con pocos errores.</td>
+              <td>Presenta varios errores o no verifica.</td>
+            </tr>
+            <tr>
+              <td>Presentación</td>
+              <td>Procedimientos claros, ordenados y con notación adecuada.</td>
+              <td>Procedimientos comprensibles con leves omisiones.</td>
+              <td>Procedimientos poco claros o incompletos.</td>
+            </tr>
+            <tr>
+              <td>Participación</td>
+              <td>Comparte dudas y apoya a sus pares en la modalidad virtual.</td>
+              <td>Participa de manera intermitente.</td>
+              <td>Participación mínima o nula.</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderMaterial(topicRaw) {
+      const topic = sentenceCase(topicRaw || defaultTopic);
+      const objectives = buildObjectives(topic);
+      const prior = buildPriorKnowledge(topic);
+      const materialHTML = `
+        <div class="card header-block">
+          <p>U.E. PCEI TUNGURAHUA – Educación de Jóvenes y Adultos – Modalidad Virtual</p>
+          <h2>${topic}</h2>
+          <p>Nivel sugerido: BGU (1.º - 3.º)</p>
+        </div>
+        <div class="card">
+          <div class="section-title"><span>1)</span>Objetivos de aprendizaje</div>
+          <ul>${objectives.map(o => `<li>${o}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div class="section-title"><span>2)</span>Conocimientos previos</div>
+          <ul>${prior.map(p => `<li>${p}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div class="section-title"><span>3)</span>Desarrollo teórico</div>
+          ${buildTheory(topic)}
+        </div>
+        <div class="card">
+          <div class="section-title"><span>4)</span>Ejemplos resueltos</div>
+          ${buildExamples(topic)}
+        </div>
+        <div class="card">
+          <div class="section-title"><span>5)</span>Actividades de práctica</div>
+          ${buildExercises(topic)}
+        </div>
+        <div class="card">
+          <div class="section-title"><span>6)</span>Autoevaluación rápida</div>
+          ${buildSelfCheck(topic)}
+        </div>
+        <div class="card">
+          <div class="section-title"><span>7)</span>Rúbrica sencilla de evaluación</div>
+          ${buildRubric()}
+        </div>
+      `;
+      materialContainer.innerHTML = materialHTML;
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([materialContainer]);
+      }
+    }
+
+    generateBtn.addEventListener('click', () => {
+      renderMaterial(topicInput.value || defaultTopic);
+    });
+
+    exampleBtn.addEventListener('click', () => {
+      topicInput.value = 'Ecuaciones lineales con una incógnita';
+      renderMaterial(topicInput.value);
+    });
+
+    pdfBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Render initial example
+    renderMaterial(defaultTopic);
+  </script>
 </body>
 </html>
-
